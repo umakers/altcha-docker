@@ -12,7 +12,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "yarn run tsc",
-    "start": "yarn run nodemon ./src/index.ts"
+    "dev": "yarn run nodemon ./src/index.ts",
+    "start": "node ./build/index.js"
   },
   "keywords": [],
   "author": "Kai Hentschel <kai@umami-creative.de>",

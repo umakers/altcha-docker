@@ -1,0 +1,9 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      SECRET: $ecret.key
+      NODE_ENV: production
+    ports:
+      - 3000:3000

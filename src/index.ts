@@ -9,6 +9,7 @@ import chalk from "chalk";
 
   const app: Express = express();
   app.use(helmet());
+  app.use(express.json());
 
   const port = process.env.PORT || 3000;
   const hmacKey = process.env.SECRET as string;
@@ -21,8 +22,12 @@ import chalk from "chalk";
 
   app.get("/challenge", async (req: Request, res: Response) => {
     const challenge = await createChallenge({ hmacKey });
-    console.log(challenge);
     res.status(200).json(challenge);
+  });
+
+  app.get("/verify", async (req: Request, res: Response) => {
+    const ok = await verifySolution(req.body, hmacKey);
+    res.sendStatus(ok ? 202 : 417);
   });
 
   app.listen(port, () => {

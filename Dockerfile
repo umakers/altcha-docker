@@ -27,6 +27,7 @@ FROM base as final
 ENV NODE_ENV production
 USER node
 COPY package.json .
+COPY .env .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
 

@@ -1,5 +1,4 @@
 {
-  "packageManager": "yarn@4.1.1",
   "dependencies": {
     "altcha-lib": "^0.1.5",
     "chalk": "^4.1.2",
@@ -22,6 +21,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.7",
+    "@yarnpkg/pnpify": "^4.0.1",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

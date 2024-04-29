@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async defer src="https://cdn.jsdelivr.net/gh/altcha-org/altcha@main/dist/altcha.min.js" type="module"></script>
+  <meta charset="UTF-8">
+  <title>Altcha - Demo Page</title>
+</head>
+<body style="padding: 24px;">
+  <div class="container">
+      <h1>Altcha Widget Demo</h1>
+      <form action="/test" method="POST">
+        <input style="margin-bottom: 12px;" name="test-input" placeholder="A random input field">
+        <altcha-widget
+          challengeurl="http://localhost:3000/challenge"
+        ></altcha-widget>
+        <button style="margin-top: 12px;">Submit</button>
+      </form>
+  </div>
+</body>
+</html>

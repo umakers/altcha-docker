@@ -3,13 +3,22 @@ import dotenv from "dotenv";
 import { createChallenge, verifySolution } from "altcha-lib";
 import helmet from "helmet";
 import chalk from "chalk";
+import path from "path";
+import cors from "cors";
+import axios from 'axios';
+
+dotenv.config();
 
 (async () => {
-  dotenv.config();
-
   const app: Express = express();
   app.use(helmet());
   app.use(express.json());
+
+  const corsOptions = {
+    origin: '*'
+  };
+  
+  app.use(cors(corsOptions)); 
 
   const port = process.env.PORT || 3000;
   const hmacKey = process.env.SECRET as string;
@@ -26,7 +35,7 @@ import chalk from "chalk";
   });
 
   app.get("/verify", async (req: Request, res: Response) => {
-    const ok = await verifySolution(req.body, hmacKey);
+    const ok = await verifySolution(req.query.altcha as string, hmacKey);
     res.sendStatus(ok ? 202 : 417);
   });
 
@@ -34,3 +43,36 @@ import chalk from "chalk";
     console.log(`[ALTCHA]: Captcha Server is running at http://localhost:${port}`);
   });
 })();
+
+if (process.env.DEMO?.toLowerCase() === "true") {
+  (async () => {
+    const app: Express = express();
+    app.use(helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "script-src": ["'self'", "https://cdn.jsdelivr.net", "http://localhost:3000"],
+          "connect-src": ["'self'", "http://localhost:3000"] 
+        }
+      }
+    }));
+    
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+  
+    const port = 8080;
+  
+    app.get("/", (req: Request, res: Response) => {
+      res.sendFile(path.join(__dirname, '/demo/index.html'));
+    });
+
+    app.post("/test", async (req: Request, res: Response) => {
+      var result = await axios.get("http://localhost:3000/verify", { params: {altcha: req.body.altcha }})
+      res.sendStatus(result.status);
+    });
+  
+    app.listen(port, () => {
+      console.log(`[ALTCHA]: Captcha Test Server is running at http://localhost:${port}`);
+    });
+  })();
+}

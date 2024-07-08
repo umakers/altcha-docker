@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { createChallenge, verifySolution } from "altcha-lib";
 import helmet from "helmet";
-import chalk from "chalk";
 import path from "path";
 import cors from "cors";
 import axios from 'axios';
@@ -23,10 +22,10 @@ dotenv.config();
   const port = process.env.PORT || 3000;
   const hmacKey = process.env.SECRET as string;
 
-  if (hmacKey == "$ecret.key") console.log(chalk.white.bgRed.bold(" [WARNING] CHANGE ALTCHA SECRET KEY - its still default !!! "));
+  if (hmacKey == "$ecret.key") console.log(" [WARNING] CHANGE ALTCHA SECRET KEY - its still default !!! ");
 
   app.get("/", (req: Request, res: Response) => {
-    res.send("Hello World!");
+    res.sendStatus(204);
   });
 
   app.get("/challenge", async (req: Request, res: Response) => {

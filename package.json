@@ -12,7 +12,7 @@
   "license": "MIT",
   "description": "Docker Image for altcha captcha solution",
   "dependencies": {
-    "altcha": "^0.6.2",
+    "altcha": "^0.6.3",
     "altcha-lib": "^0.3.0",
     "axios": "^1.7.2",
     "cors": "^2.8.5",

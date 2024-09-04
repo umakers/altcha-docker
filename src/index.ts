@@ -8,6 +8,12 @@ import axios from 'axios';
 
 dotenv.config();
 
+const addMinutesToDate = (date: Date, n: number) => {
+  const d = new Date(date);
+  d.setTime(d.getTime() + n * 60_000);
+  return d;
+};
+
 (async () => {
   const app: Express = express();
   app.use(helmet());
@@ -21,6 +27,7 @@ dotenv.config();
 
   const port = process.env.PORT || 3000;
   const hmacKey = process.env.SECRET as string;
+  const expireMinutes = (process.env.EXPIREMINUTES || 10) as number;
 
   if (hmacKey == "$ecret.key") console.log(" [WARNING] CHANGE ALTCHA SECRET KEY - its still default !!! ");
 
@@ -29,7 +36,7 @@ dotenv.config();
   });
 
   app.get("/challenge", async (req: Request, res: Response) => {
-    const challenge = await createChallenge({ hmacKey });
+    const challenge = await createChallenge({ hmacKey, expires: addMinutesToDate(new Date(), expireMinutes) });
     res.status(200).json(challenge);
   });
 
@@ -50,8 +57,9 @@ if (process.env.DEMO?.toLowerCase() === "true") {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          "script-src": ["'self'", "https://cdn.jsdelivr.net", "http://localhost:3000"],
-          "connect-src": ["'self'", "http://localhost:3000"] 
+          "script-src": ["'self'", "https://cdn.jsdelivr.net", "http://localhost:3000", "http://localhost:8080"],
+          "connect-src": ["'self'", "http://localhost:3000", "http://localhost:8080", "blob://*"],
+          "worker-src": ["'self'", "http://localhost:3000", "http://localhost:8080", "blob://*"],
         }
       }
     }));

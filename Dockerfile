@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=20.12.2
+ARG NODE_VERSION=20.17.0
 FROM node:${NODE_VERSION}-alpine as base
 
 WORKDIR /usr/src/app
@@ -10,14 +10,14 @@ FROM base as deps
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --production --frozen-lockfile
+    yarn install --production
 
 FROM deps as build
 
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
+    yarn install
 
 COPY . .
 RUN yarn run build

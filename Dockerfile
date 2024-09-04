@@ -26,8 +26,7 @@ COPY .env .
 COPY src/demo/index.html ./build/demo/index.html
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
-COPY --from=build /usr/src/app/yarn.lock ./yarn.lock
 
 EXPOSE 3000
 
-CMD yarn start
+CMD npm start

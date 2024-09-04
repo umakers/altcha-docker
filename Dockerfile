@@ -12,14 +12,14 @@ RUN corepack enable
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --production --frozen-lockfile
+    yarn workspaces focus
 
 FROM deps as build
 
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
+    yarn workspaces focus
 
 COPY . .
 RUN yarn run build

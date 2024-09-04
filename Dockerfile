@@ -12,7 +12,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=cache,target=/root/.yarn \
-    yarn workspaces focus --production
+    yarn workspaces focus --production --immutable
 
 FROM deps as build
 
@@ -20,7 +20,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=cache,target=/root/.yarn \
-    yarn workspaces focus
+    yarn workspaces focus --immutable
 
 COPY . .
 RUN yarn run build
@@ -34,7 +34,6 @@ COPY .env .
 COPY src/demo/index.html ./build/demo/index.html
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
-COPY --from=deps /usr/src/app/yarn.lock ./yarn.lock
 
 EXPOSE 3000
 

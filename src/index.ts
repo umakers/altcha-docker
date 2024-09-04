@@ -28,6 +28,8 @@ const addMinutesToDate = (date: Date, n: number) => {
   const port = process.env.PORT || 3000;
   const hmacKey = process.env.SECRET as string;
   const expireMinutes = (process.env.EXPIREMINUTES || 10) as number;
+  const maxRecords = (process.env.MAXRECORDS || 1000) as number;
+  const recordCache: string[] = [];
 
   if (hmacKey == "$ecret.key") console.log(" [WARNING] CHANGE ALTCHA SECRET KEY - its still default !!! ");
 
@@ -41,8 +43,15 @@ const addMinutesToDate = (date: Date, n: number) => {
   });
 
   app.get("/verify", async (req: Request, res: Response) => {
-    const ok = await verifySolution(req.query.altcha as string, hmacKey);
-    res.sendStatus(ok ? 202 : 417);
+    if (recordCache.includes(req.query.altcha as string)) {
+      // already verified
+      res.sendStatus(417);
+    } else {
+      const ok = await verifySolution(req.query.altcha as string, hmacKey);
+      recordCache.push(req.query.altcha as string);
+      if (recordCache.length > maxRecords) recordCache.shift();
+      res.sendStatus(ok ? 202 : 417);
+    }
   });
 
   app.listen(port, () => {
@@ -74,8 +83,13 @@ if (process.env.DEMO?.toLowerCase() === "true") {
     });
 
     app.post("/test", async (req: Request, res: Response) => {
-      var result = await axios.get("http://localhost:3000/verify", { params: {altcha: req.body.altcha }})
-      res.sendStatus(result.status);
+      try {
+        var result = await axios.get("http://localhost:3000/verify", { params: {altcha: req.body.altcha }})
+        res.sendStatus(result.status);
+      } catch(ex: any) {
+        //console.error(ex);
+        res.sendStatus(ex.status);
+      }
     });
   
     app.listen(port, () => {

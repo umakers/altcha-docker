@@ -37,7 +37,7 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       '@types/node':
-        specifier: ^22.5.3
+        specifier: ^22.5.4
         version: 22.5.4
       '@yarnpkg/pnpify':
         specifier: ^4.1.1

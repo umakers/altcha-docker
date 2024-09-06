@@ -9,13 +9,11 @@ RUN corepack enable
 FROM base as build
 
 RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
-    --mount=type=cache,target=/root/.yarn \
-    yarn install --immutable
+    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
+    pnpm i --frozen-lockfile
 
 COPY . .
-RUN yarn run build
+RUN pnpm run build
 
 FROM base as final
 

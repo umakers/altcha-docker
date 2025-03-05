@@ -1,16 +1,32 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=20.17.0
-FROM node:${NODE_VERSION}-alpine as base
+FROM node:20-bullseye AS base
 
 WORKDIR /usr/src/app
-RUN corepack enable
+
+
+# Install dependencies needed for pnpm
+RUN apt-get update && apt-get install -y curl
+
+# Install pnpm manually (bypassing Corepack)
+RUN npm install -g pnpm
+
+# Ensure pnpm is accessible in the PATH
+ENV PATH="/root/.npm-global/bin:$PATH"
+
+# Verify pnpm installation
+RUN pnpm --version
+
+# Copy package files and install dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm i --frozen-lockfile
+
+
 
 FROM base as build
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm i --frozen-lockfile
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    pnpm i --frozen-lockfile
 
 COPY . .
 RUN pnpm run build
